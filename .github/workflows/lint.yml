@@ -1,0 +1,48 @@
+name: Lint
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  php:
+    name: PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Oldest supported and the version it is tested on (see README)
+        php: ['7.4', '8.4']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: none
+      - name: php -l
+        run: |
+          rc=0
+          while IFS= read -r -d '' f; do
+            php -l "$f" >/dev/null || rc=1
+          done < <(find . -name '*.php' -not -path './.git/*' -not -path './vendor/*' -print0)
+          exit $rc
+
+  js:
+    name: JavaScript
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: 22
+      - name: node --check
+        run: |
+          rc=0
+          for f in assets/*.js; do
+            node --check "$f" || rc=1
+          done
+          exit $rc
+

@@ -1,0 +1,24 @@
+# ---------------------------------------------------------------------------
+# Forum host (www.example.com, forum + upload tool): P1/P2
+#
+# 1. In the port 443 vhost (e.g. www.example.com-le-ssl.conf), inside <VirtualHost>:
+# ---------------------------------------------------------------------------
+
+# Nobody may frame the forum (clickjacking from user pages or elsewhere).
+Header always set X-Frame-Options "SAMEORIGIN"
+Header always set X-Content-Type-Options "nosniff"
+
+# One canonical forum address, so forum cookies can be host-only (step 2).
+RewriteEngine on
+RewriteCond %{HTTP_HOST} ^example\.com$ [NC]
+RewriteRule ^ https://www.example.com%{REQUEST_URI} [L,R=301]
+
+# ---------------------------------------------------------------------------
+# 2. phpBB: ACP → General → Server configuration → Cookie settings
+#      Cookie domain : (empty)          was ".example.com"
+#      Cookie secure : Yes              was No
+#    Effect: forum cookies are only sent to www.example.com, never to
+#    files.example.com. Everyone is signed out once.
+#    Do this AFTER the redirect above is live, or people visiting
+#    https://example.com/ directly would not stay signed in.
+# ---------------------------------------------------------------------------
