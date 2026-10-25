@@ -1,0 +1,45 @@
+# Local configuration (may hold DB credentials); config.sample.php is the template
+config.php
+
+# Runtime data: login throttling, partial uploads
+/var/
+
+# Dev-only files that must never be committed or deployed
+dev-login.php
+/prompt.md
+deploy.sh
+
+# Composer (not used today, but keep vendor code out if it ever is)
+/vendor/
+composer.phar
+
+# Tooling caches
+.phpunit.result.cache
+.phpunit.cache/
+.php-cs-fixer.cache
+.php_cs.cache
+.phpstan/
+.psalm/
+
+# Claude Code: keep the shared project skill, ignore personal settings
+.claude/settings.local.json
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+*.swo
+*~
+
+# Editors and OS
+.idea/
+.vscode/
+*.sublime-*
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.*
+!.env.example
+.claude/
